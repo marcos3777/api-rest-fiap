@@ -15,6 +15,9 @@ public class LivroService {
         Livro livro = new Livro();
         livro.setAutor(livroRequest.getAutor());
         livro.setTitulo(livroRequest.getTitulo());
+        livro.setPreco(livroRequest.getPreco());
+        livro.setIsbn(livroRequest.getIsbn());
+        livro.setCategoria(livroRequest.getCategoria());
         return livro;
     }
 

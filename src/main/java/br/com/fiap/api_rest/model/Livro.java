@@ -13,8 +13,35 @@ public class Livro {
     private String titulo;
     private String autor;
     private int preco;
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public int getPreco() {
+        return preco;
+    }
+
+    public void setPreco(int preco) {
+        this.preco = preco;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
     private Categoria categoria;
     private String isbn;
+
+
 
     public Long getId() {
         return id;
