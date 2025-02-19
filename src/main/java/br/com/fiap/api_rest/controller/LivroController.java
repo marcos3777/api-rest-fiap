@@ -53,14 +53,15 @@ public class LivroController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Livro> updateLivro(@RequestBody Livro livro,
+    public ResponseEntity<Livro> updateLivro(@RequestBody LivroRequest livro,
                                              @PathVariable Long id) {
         Optional<Livro> livroExistente = livroRepository.findById(id);
         if (livroExistente.isEmpty()) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        livro.setId(livroExistente.get().getId());
-        Livro livroSalvo = livroRepository.save(livro);
+        Livro livroConvertido = livroService.requestToLivro(livro);
+        livroConvertido.setId(livroExistente.get().getId());
+        Livro livroSalvo = livroRepository.save(livroConvertido);
         return new ResponseEntity<>(livroSalvo,HttpStatus.CREATED);
     }
 
@@ -69,7 +70,5 @@ public class LivroController {
         livroRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    //teste
 
 }
