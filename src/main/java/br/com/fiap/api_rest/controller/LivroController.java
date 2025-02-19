@@ -34,11 +34,7 @@ public class LivroController {
     @GetMapping
     public ResponseEntity<List<LivroResponse>> readLivros() {
         List<Livro> livros = livroRepository.findAll();
-        List<LivroResponse> listaLivros = new ArrayList<>();
-        for (Livro livro : livros) {
-            listaLivros.add(livroService.livroToResponse(livro));
-        }
-        return new ResponseEntity<>(listaLivros,HttpStatus.OK);
+        return new ResponseEntity<>(livroService.livrosToResponse(livros),HttpStatus.OK);
     }
 
     // @PathVariable localhost:8080/livros/1
