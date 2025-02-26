@@ -5,6 +5,7 @@ import br.com.fiap.api_rest.dto.LivroResponse;
 import br.com.fiap.api_rest.model.Livro;
 import br.com.fiap.api_rest.repository.LivroRepository;
 import br.com.fiap.api_rest.service.LivroService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,9 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/livros")
@@ -30,14 +32,14 @@ public class LivroController {
     // POST, GET, PUT, DELETE
 
     @PostMapping
-    public ResponseEntity<Livro> createLivro(@RequestBody LivroRequest livro) {
+    public ResponseEntity<Livro> createLivro(@Valid @RequestBody LivroRequest livro) {
         Livro livroSalvo = livroRepository.save(livroService.requestToLivro(livro));
         return new ResponseEntity<>(livroSalvo,HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<Page<LivroResponse>> readLivros() {
-        Pageable pageable = PageRequest.of(0, 2, Sort.by("titulo").ascending());
+    public ResponseEntity<Page<LivroResponse>> readLivros(@RequestParam(defaultValue = "0") int pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, 2, Sort.by("titulo").ascending());
 
         //Page<Livro> livros = livroRepository.findAll(pageable);
         return new ResponseEntity<>(livroService.findAll(pageable),HttpStatus.OK);
@@ -46,12 +48,20 @@ public class LivroController {
     // @PathVariable localhost:8080/livros/1
     // @RequestParam localhost:8080/livros/?id=1
     @GetMapping("/{id}")
-    public ResponseEntity<Livro> readLivro(@PathVariable Long id) {
+    public ResponseEntity<LivroResponse> readLivro(@PathVariable Long id) {
         Optional<Livro> livro = livroRepository.findById(id);
         if (livro.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(livro.get(),HttpStatus.OK);
+        LivroResponse livroResponse = livroService.livroToResponse(livro.get());
+        livroResponse.setLink(
+                linkTo(
+
+                        methodOn(LivroController.class).readLivros(0)
+                ).withRel("Lista de Livros")
+
+        );
+        return new ResponseEntity<>(livroResponse,HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

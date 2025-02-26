@@ -13,7 +13,7 @@ public class LivroRequest {
     @Min(value = 10, message = "O preço deve ser maior que 10")
     @Max(value = 1000, message = "O preço deve ser menor que 1000")
     private int preco;
-    @Pattern(regexp = "^970\\d{10}$|^970\\d{7}$", message = "O ISBN deve seguir o padrão 000-0000000000")
+    @Pattern(regexp = "^970\\d{10}$|^970\\d{7}$", message = "O ISBN deve seguir o padrão 970- e 10 ou 13 digitos")
     private String isbn;
     @NotNull(message = "A categoria é obrigatória")
     private Categoria categoria;
