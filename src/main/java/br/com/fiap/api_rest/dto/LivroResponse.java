@@ -6,8 +6,23 @@ public class LivroResponse {
 
     private String infoLivro;
 
-    public LivroResponse(String infoLivro) {
+    private Long id;
+
+
+
+    public LivroResponse(Long id,String infoLivro) {
+        this.id = id;
         this.infoLivro = infoLivro;
+    }
+
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Link getLink() {

@@ -41,6 +41,15 @@ public class LivroController {
     public ResponseEntity<Page<LivroResponse>> readLivros(@RequestParam(defaultValue = "0") int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, 2, Sort.by("titulo").ascending());
 
+        Page<LivroResponse> livros = livroService.findAll(pageable);
+        for (LivroResponse livro : livros) {
+            livro.setLink(
+                    linkTo(
+                            methodOn(LivroController.class).readLivro(livro.getId())
+                    ).withSelfRel()
+            );
+        }
+
         //Page<Livro> livros = livroRepository.findAll(pageable);
         return new ResponseEntity<>(livroService.findAll(pageable),HttpStatus.OK);
     }
@@ -61,6 +70,8 @@ public class LivroController {
                 ).withRel("Lista de Livros")
 
         );
+
+
         return new ResponseEntity<>(livroResponse,HttpStatus.OK);
     }
 

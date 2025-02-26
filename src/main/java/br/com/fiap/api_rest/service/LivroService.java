@@ -1,5 +1,6 @@
 package br.com.fiap.api_rest.service;
 
+import br.com.fiap.api_rest.controller.LivroController;
 import br.com.fiap.api_rest.dto.LivroRequest;
 import br.com.fiap.api_rest.dto.LivroRequestDTO;
 import br.com.fiap.api_rest.dto.LivroResponse;
@@ -8,10 +9,14 @@ import br.com.fiap.api_rest.repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class LivroService {
@@ -38,8 +43,10 @@ public class LivroService {
     }
 
     public LivroResponse livroToResponse(Livro livro) {
-        return new LivroResponse(livro.getAutor() + " - " + livro.getTitulo());
+        return new LivroResponse(livro.getId(), livro.getAutor() + " - " + livro.getTitulo());
     }
+
+   
 
     public List<LivroResponse> livrosToResponse(List<Livro> livros) {
         List<LivroResponse> listaLivros = new ArrayList<>();
