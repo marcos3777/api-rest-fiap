@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -119,4 +120,39 @@ public class LivroController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping
+    public List<Livro> listarTodos() {
+        return livroRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Livro> buscarPorId(@PathVariable Long id) {
+        Optional<Livro> livro = livroRepository.findById(id);
+        return livro.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<Livro> criar(@RequestBody Livro livro) {
+        Livro novoLivro = livroRepository.save(livro);
+        return ResponseEntity.ok(novoLivro);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Livro> atualizar(@PathVariable Long id, @RequestBody Livro livro) {
+        if (!livroRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        livro.setId(id);
+        Livro livroAtualizado = livroRepository.save(livro);
+        return ResponseEntity.ok(livroAtualizado);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        if (!livroRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        livroRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
