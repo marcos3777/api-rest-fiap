@@ -4,12 +4,16 @@ import br.com.fiap.api_rest.dto.AutorRequest;
 import br.com.fiap.api_rest.dto.AutorResponseDTO;
 import br.com.fiap.api_rest.dto.LivroResponseDTO;
 import br.com.fiap.api_rest.model.Autor;
+import br.com.fiap.api_rest.model.Livro;
 import br.com.fiap.api_rest.repository.AutorRepository;
+import br.com.fiap.api_rest.repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,11 +24,21 @@ public class AutorService {
     
     @Autowired
     private LivroService livroService;
+    
+    @Autowired
+    private LivroRepository livroRepository;
 
     public Autor requestToAutor(AutorRequest request) {
         Autor autor = new Autor();
         autor.setNome(request.getNome());
-        autor.setLivros(request.getLivros());
+        
+        if (request.getLivroIds() != null && !request.getLivroIds().isEmpty()) {
+            List<Livro> livros = livroRepository.findAllById(request.getLivroIds());
+            autor.setLivros(livros);
+        } else {
+            autor.setLivros(new ArrayList<>());
+        }
+        
         return autor;
     }
 
