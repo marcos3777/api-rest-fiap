@@ -22,15 +22,16 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Service
 public class LivroService {
     @Autowired
-    LivroRepository livroRepository;
+    private LivroRepository livroRepository;
 
-    public Livro requestToLivro(LivroRequest livroRequest) {
+    public Livro requestToLivro(LivroRequest request) {
         Livro livro = new Livro();
-        livro.setAutor(livroRequest.getAutor());
-        livro.setTitulo(livroRequest.getTitulo());
-        livro.setPreco(livroRequest.getPreco());
-        livro.setCategoria(livroRequest.getCategoria());
-        livro.setIsbn(livroRequest.getIsbn());
+        livro.setTitulo(request.getTitulo());
+        livro.setPreco(request.getPreco());
+        livro.setCategoria(request.getCategoria());
+        livro.setIsbn(request.getIsbn());
+        livro.setAutores(request.getAutores());
+        livro.setBiblioteca(request.getBiblioteca());
         return livro;
     }
 
@@ -45,14 +46,20 @@ public class LivroService {
         return new LivroResponse(livro.getId(), livro.getAutor() + " - " + livro.getTitulo());
     }
 
-    public LivroResponseDTO livroToResponseDTO(Livro livro, boolean self) {
-        Link link;
-        if (self) {
-            link = linkTo(methodOn(LivroController.class).readLivro(livro.getId())).withSelfRel();
-        } else {
-            link = linkTo(methodOn(LivroController.class).readLivros(0)).withRel("Lista de Livros");
+    public LivroResponseDTO livroToResponseDTO(Livro livro, boolean showDetails) {
+        LivroResponseDTO dto = new LivroResponseDTO();
+        dto.setId(livro.getId());
+        dto.setTitulo(livro.getTitulo());
+        dto.setPreco(livro.getPreco());
+        dto.setCategoria(livro.getCategoria());
+        dto.setIsbn(livro.getIsbn());
+        
+        if (showDetails) {
+            dto.setAutores(livro.getAutores());
+            dto.setBiblioteca(livro.getBiblioteca());
         }
-        return new LivroResponseDTO(livro.getId(), livro.getAutor() + " - " + livro.getTitulo(), link);
+        
+        return dto;
     }
 
     public List<LivroResponse> livrosToResponse(List<Livro> livros) {
@@ -69,6 +76,7 @@ public class LivroService {
     }
 
     public Page<LivroResponseDTO> findAllDTO(Pageable pageable) {
-        return livroRepository.findAll(pageable).map(livro -> livroToResponseDTO(livro, true));
+        Page<Livro> livros = livroRepository.findAll(pageable);
+        return livros.map(livro -> livroToResponseDTO(livro, true));
     }
 }

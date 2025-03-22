@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -32,9 +31,6 @@ public class LivroController {
     private LivroRepository livroRepository;
     @Autowired
     private LivroService livroService;
-
-    // CREATE, READ, UPDATE, DELETE
-    // POST, GET, PUT, DELETE
 
     @Operation(summary = "Cria um novo livro")
     @ApiResponses(value = {
@@ -48,20 +44,17 @@ public class LivroController {
     @PostMapping
     public ResponseEntity<Livro> createLivro(@Valid @RequestBody LivroRequest livro) {
         Livro livroSalvo = livroRepository.save(livroService.requestToLivro(livro));
-        return new ResponseEntity<>(livroSalvo,HttpStatus.CREATED);
+        return new ResponseEntity<>(livroSalvo, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Lista todos os livros por páginas")
     @GetMapping
     public ResponseEntity<Page<LivroResponseDTO>> readLivros(@RequestParam(defaultValue = "0") Integer pageNumber) {
         Pageable pageable = PageRequest
-                .of(pageNumber, 2, Sort.by("autor").ascending()
-                        .and(Sort.by("titulo").ascending()));
+                .of(pageNumber, 2, Sort.by("titulo").ascending());
         return new ResponseEntity<>(livroService.findAllDTO(pageable), HttpStatus.OK);
     }
 
-    // @PathVariable localhost:8080/livros/1
-    // @RequestParam localhost:8080/livros/?id=1
     @Operation(summary = "Retorna um livro por ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Livro encontrado com sucesso",
@@ -78,7 +71,7 @@ public class LivroController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         LivroResponseDTO livroResponseDTO = livroService.livroToResponseDTO(livro.get(), false);
-        return new ResponseEntity<>(livroResponseDTO,HttpStatus.OK);
+        return new ResponseEntity<>(livroResponseDTO, HttpStatus.OK);
     }
 
     @Operation(summary = "Atualiza um livro existente")
@@ -92,7 +85,7 @@ public class LivroController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<Livro> updateLivro(@PathVariable Long id,
-                                             @RequestBody LivroRequest livro) {
+                                           @RequestBody LivroRequest livro) {
         Optional<Livro> livroExistente = livroRepository.findById(id);
         if (livroExistente.isEmpty()) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -100,7 +93,7 @@ public class LivroController {
         Livro livroConvertido = livroService.requestToLivro(livro);
         livroConvertido.setId(livroExistente.get().getId());
         Livro livroSalvo = livroRepository.save(livroConvertido);
-        return new ResponseEntity<>(livroSalvo,HttpStatus.CREATED);
+        return new ResponseEntity<>(livroSalvo, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Exclui um livro por ID")
@@ -118,41 +111,5 @@ public class LivroController {
         }
         livroRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping
-    public List<Livro> listarTodos() {
-        return livroRepository.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Livro> buscarPorId(@PathVariable Long id) {
-        Optional<Livro> livro = livroRepository.findById(id);
-        return livro.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<Livro> criar(@RequestBody Livro livro) {
-        Livro novoLivro = livroRepository.save(livro);
-        return ResponseEntity.ok(novoLivro);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Livro> atualizar(@PathVariable Long id, @RequestBody Livro livro) {
-        if (!livroRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        livro.setId(id);
-        Livro livroAtualizado = livroRepository.save(livro);
-        return ResponseEntity.ok(livroAtualizado);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        if (!livroRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        livroRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }
