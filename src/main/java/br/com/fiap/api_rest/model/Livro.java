@@ -12,7 +12,7 @@ public class Livro {
     private String titulo;
     @ManyToMany(mappedBy = "livros")
     private List<Autor> autores;
-    private int preco;
+    private Integer preco;
     private Categoria categoria;
     private String isbn;
     @ManyToOne
@@ -51,12 +51,11 @@ public class Livro {
         this.titulo = titulo;
     }
 
-
-    public int getPreco() {
+    public Integer getPreco() {
         return preco;
     }
 
-    public void setPreco(int preco) {
+    public void setPreco(Integer preco) {
         this.preco = preco;
     }
 
