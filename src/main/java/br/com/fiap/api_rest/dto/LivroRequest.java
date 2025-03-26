@@ -1,29 +1,34 @@
 package br.com.fiap.api_rest.dto;
 
-import br.com.fiap.api_rest.model.Autor;
-import br.com.fiap.api_rest.model.Biblioteca;
-import br.com.fiap.api_rest.model.Categoria;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-
 import java.util.List;
 
+import br.com.fiap.api_rest.model.Biblioteca;
+import br.com.fiap.api_rest.model.Categoria;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 public class LivroRequest {
-    @NotBlank(message = "O título é obrigatório")
+    @NotBlank(message = "O título não pode ser nulo ou vazio")
+    @Size(min = 3, max = 254, message = "O título deve ter entre 3 e 254 caracteres")
     private String titulo;
     
-    @NotNull(message = "O preço é obrigatório")
-    @Positive(message = "O preço deve ser positivo")
-    private Integer preco;
+    @NotNull(message = "O autor não pode ser nulo")
+    private List<AutorRequest> autores;
+    
+    @Min(value = 1, message = "O preço deve ser no mínimo 1")
+    @Max(value = 99, message = "O preço deve ser no máximo 99")
+    private int preco;
     
     @NotNull(message = "A categoria é obrigatória")
     private Categoria categoria;
     
-    @NotBlank(message = "O ISBN é obrigatório")
+    @Pattern(regexp = "^970\\d{10}$|^970\\d{7}$", message = "O ISBN deve ter 10 OU 13 dígitos e iniciar por 970")
     private String isbn;
     
-    private List<Autor> autores;
     private Biblioteca biblioteca;
 
     public String getTitulo() {
@@ -34,11 +39,19 @@ public class LivroRequest {
         this.titulo = titulo;
     }
 
-    public Integer getPreco() {
+    public List<AutorRequest> getAutores() {
+        return autores;
+    }
+
+    public void setAutores(List<AutorRequest> autores) {
+        this.autores = autores;
+    }
+
+    public int getPreco() {
         return preco;
     }
 
-    public void setPreco(Integer preco) {
+    public void setPreco(int preco) {
         this.preco = preco;
     }
 
@@ -56,14 +69,6 @@ public class LivroRequest {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
-    }
-
-    public List<Autor> getAutores() {
-        return autores;
-    }
-
-    public void setAutores(List<Autor> autores) {
-        this.autores = autores;
     }
 
     public Biblioteca getBiblioteca() {

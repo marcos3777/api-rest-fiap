@@ -1,27 +1,41 @@
 package br.com.fiap.api_rest.model;
 
-
-import jakarta.persistence.*;
-
 import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 
 @Entity
 public class Autor {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String nome;
-    @ManyToMany(cascade = CascadeType.ALL)
-    //tabela autor_livro
-    //colunas id_livro, id_autor
-    // 1, 1
-    // 1, 2
-    // 5, 2
+    @ManyToMany
     @JoinTable(name = "autor_livro",
-            joinColumns = @JoinColumn(name = "id_livro", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "id_autor", referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "id_autor", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "id_livro", referencedColumnName = "id"))
     private List<Livro> livros;
+
+    public Autor() {
+    }
+
+    public Autor(String nome) {
+        this.nome = nome;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getNome() {
         return nome;
@@ -38,15 +52,4 @@ public class Autor {
     public void setLivros(List<Livro> livros) {
         this.livros = livros;
     }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-
-
 }

@@ -1,25 +1,33 @@
 package br.com.fiap.api_rest.model;
 
-import jakarta.persistence.*;
-
-import java.math.BigDecimal;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 
 @Entity
+public class Endereco {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String localizacao;
+    @OneToOne(mappedBy = "endereco")
+    private Biblioteca biblioteca;
 
-
-
-    public class Endereco{
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private int id;
-        private String localizacao;
-
-    public Biblioteca getBiblioteca() {
-        return biblioteca;
+    public Endereco() {
     }
 
-    public void setBiblioteca(Biblioteca biblioteca) {
-        this.biblioteca = biblioteca;
+    public Endereco(String localizacao) {
+        this.localizacao = localizacao;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getLocalizacao() {
@@ -30,15 +38,12 @@ import java.math.BigDecimal;
         this.localizacao = localizacao;
     }
 
-    public int getId() {
-        return id;
+    public Biblioteca getBiblioteca() {
+        return biblioteca;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setBiblioteca(Biblioteca biblioteca) {
+        this.biblioteca = biblioteca;
     }
-
-    @OneToOne(mappedBy = "endereco")
-        private Biblioteca biblioteca;
-    }
+}
 

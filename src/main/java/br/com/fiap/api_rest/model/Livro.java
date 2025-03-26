@@ -1,8 +1,14 @@
 package br.com.fiap.api_rest.model;
 
-import jakarta.persistence.*;
-
 import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Livro {
@@ -12,28 +18,12 @@ public class Livro {
     private String titulo;
     @ManyToMany(mappedBy = "livros")
     private List<Autor> autores;
-    private Integer preco;
+    private int preco;
     private Categoria categoria;
     private String isbn;
     @ManyToOne
     @JoinColumn(name = "id_biblioteca")
     private Biblioteca biblioteca;
-
-    public Biblioteca getBiblioteca() {
-        return biblioteca;
-    }
-
-    public void setBiblioteca(Biblioteca biblioteca) {
-        this.biblioteca = biblioteca;
-    }
-
-    public List<Autor> getAutores() {
-        return autores;
-    }
-
-    public void setAutores(List<Autor> autores) {
-        this.autores = autores;
-    }
 
     public Long getId() {
         return id;
@@ -51,11 +41,19 @@ public class Livro {
         this.titulo = titulo;
     }
 
-    public Integer getPreco() {
+    public List<Autor> getAutores() {
+        return autores;
+    }
+
+    public void setAutores(List<Autor> autores) {
+        this.autores = autores;
+    }
+
+    public int getPreco() {
         return preco;
     }
 
-    public void setPreco(Integer preco) {
+    public void setPreco(int preco) {
         this.preco = preco;
     }
 
@@ -73,5 +71,13 @@ public class Livro {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
+    }
+
+    public Biblioteca getBiblioteca() {
+        return biblioteca;
+    }
+
+    public void setBiblioteca(Biblioteca biblioteca) {
+        this.biblioteca = biblioteca;
     }
 }
